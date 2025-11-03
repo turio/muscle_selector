@@ -3,55 +3,63 @@ import 'package:muscle_selector/src/parser.dart';
 
 void main() {
   group('Parser Label Tests', () {
-    test('Front view muscles have correct simplified labels', () {
-      expect(Parser.getMuscleLabel('front_right_leg'), equals('Calf'));
-      expect(Parser.getMuscleLabel('front_left_leg'), equals('Calf'));
+    test('Front view muscles have correct plural labels', () {
+      expect(Parser.getMuscleLabel('front_right_leg'), equals('Calves'));
+      expect(Parser.getMuscleLabel('front_left_leg'), equals('Calves'));
+      expect(Parser.getMuscleLabel('front_right_adductor_magnus'),
+          equals('Quads'));
       expect(
-          Parser.getMuscleLabel('front_right_adductor_magnus'), equals('Quad'));
-      expect(
-          Parser.getMuscleLabel('front_left_adductor_magnus'), equals('Quad'));
-      expect(Parser.getMuscleLabel('front_left_thigh'), equals('Adductor'));
-      expect(Parser.getMuscleLabel('front_right_thigh'), equals('Adductor'));
+          Parser.getMuscleLabel('front_left_adductor_magnus'), equals('Quads'));
+      expect(Parser.getMuscleLabel('front_left_thigh'), equals('Adductors'));
+      expect(Parser.getMuscleLabel('front_right_thigh'), equals('Adductors'));
       expect(Parser.getMuscleLabel('front_groin_area'), equals('Groin'));
       expect(Parser.getMuscleLabel('front_torso'), equals('Abs'));
-      expect(Parser.getMuscleLabel('front_left_side_chest'), equals('Oblique'));
       expect(
-          Parser.getMuscleLabel('front_right_side_chest'), equals('Oblique'));
+          Parser.getMuscleLabel('front_left_side_chest'), equals('Obliques'));
+      expect(
+          Parser.getMuscleLabel('front_right_side_chest'), equals('Obliques'));
       expect(Parser.getMuscleLabel('front_left_shoulder_upper_back'),
-          equals('Trap'));
+          equals('Traps'));
       expect(Parser.getMuscleLabel('front_right_shoulder_upper_back'),
-          equals('Trap'));
-      expect(Parser.getMuscleLabel('front_left_triceps'), equals('Forearm'));
-      expect(Parser.getMuscleLabel('front_right_triceps'), equals('Forearm'));
+          equals('Traps'));
+      expect(Parser.getMuscleLabel('front_left_triceps'), equals('Forearms'));
+      expect(Parser.getMuscleLabel('front_right_triceps'), equals('Forearms'));
       expect(Parser.getMuscleLabel('front_left_chest_muscle'), equals('Chest'));
       expect(
           Parser.getMuscleLabel('front_right_chest_muscle'), equals('Chest'));
       expect(Parser.getMuscleLabel('front_middle_chest'), equals('Chest'));
+      expect(Parser.getMuscleLabel('front_left_upper_arm'), equals('Biceps'));
+      expect(Parser.getMuscleLabel('front_right_upper_arm'), equals('Biceps'));
+      expect(Parser.getMuscleLabel('front_left_shoulder'), equals('Shoulders'));
+      expect(
+          Parser.getMuscleLabel('front_right_shoulder'), equals('Shoulders'));
     });
 
-    test('Back view muscles have correct simplified labels', () {
+    test('Back view muscles have correct plural labels', () {
       expect(Parser.getMuscleLabel('back_right_adductor_magnus'),
-          equals('Hamstring'));
+          equals('Hamstrings'));
       expect(Parser.getMuscleLabel('back_left_adductor_magnus'),
-          equals('Hamstring'));
-      expect(Parser.getMuscleLabel('back_left_buttocks'), equals('Glute'));
-      expect(Parser.getMuscleLabel('back_right_buttocks'), equals('Glute'));
-      expect(Parser.getMuscleLabel('back_left_thigh'), equals('Adductor'));
-      expect(Parser.getMuscleLabel('back_right_thigh'), equals('Adductor'));
-      expect(Parser.getMuscleLabel('upper_left_back'), equals('Lat'));
-      expect(Parser.getMuscleLabel('upper_right_back'), equals('Lat'));
-      expect(Parser.getMuscleLabel('mid_back'), equals('Trap'));
-      expect(Parser.getMuscleLabel('back_upper_back'), equals('Trap'));
-      expect(Parser.getMuscleLabel('back_upper_neck'), equals('Trap'));
-      expect(Parser.getMuscleLabel('back_mid_back'), equals('Trap'));
-      expect(Parser.getMuscleLabel('back_right_upper_arm'), equals('Tricep'));
-      expect(Parser.getMuscleLabel('back_left_upper_arm'), equals('Tricep'));
-      expect(Parser.getMuscleLabel('back_right_triceps'), equals('Forearm'));
-      expect(Parser.getMuscleLabel('back_left_triceps'), equals('Forearm'));
-      expect(Parser.getMuscleLabel('back_right_forearm'), equals('Hand'));
-      expect(Parser.getMuscleLabel('back_left_forearm'), equals('Hand'));
-      expect(Parser.getMuscleLabel('back_right_calf'), equals('Calf'));
-      expect(Parser.getMuscleLabel('back_left_calf'), equals('Calf'));
+          equals('Hamstrings'));
+      expect(Parser.getMuscleLabel('back_left_buttocks'), equals('Glutes'));
+      expect(Parser.getMuscleLabel('back_right_buttocks'), equals('Glutes'));
+      expect(Parser.getMuscleLabel('back_left_thigh'), equals('Adductors'));
+      expect(Parser.getMuscleLabel('back_right_thigh'), equals('Adductors'));
+      expect(Parser.getMuscleLabel('upper_left_back'), equals('Lats'));
+      expect(Parser.getMuscleLabel('upper_right_back'), equals('Lats'));
+      expect(Parser.getMuscleLabel('mid_back'), equals('Lower Back'));
+      expect(Parser.getMuscleLabel('back_upper_back'), equals('Traps'));
+      expect(Parser.getMuscleLabel('back_upper_neck'), equals('Traps'));
+      expect(Parser.getMuscleLabel('back_mid_back'), equals('Traps'));
+      expect(Parser.getMuscleLabel('back_right_upper_arm'), equals('Triceps'));
+      expect(Parser.getMuscleLabel('back_left_upper_arm'), equals('Triceps'));
+      expect(Parser.getMuscleLabel('back_right_triceps'), equals('Forearms'));
+      expect(Parser.getMuscleLabel('back_left_triceps'), equals('Forearms'));
+      expect(Parser.getMuscleLabel('back_right_forearm'), equals('Hands'));
+      expect(Parser.getMuscleLabel('back_left_forearm'), equals('Hands'));
+      expect(Parser.getMuscleLabel('back_right_calf'), equals('Calves'));
+      expect(Parser.getMuscleLabel('back_left_calf'), equals('Calves'));
+      expect(Parser.getMuscleLabel('back_right_shoulder'), equals('Shoulders'));
+      expect(Parser.getMuscleLabel('back_left_shoulder'), equals('Shoulders'));
     });
 
     test('Muscle pairs are correctly mapped', () {
