@@ -15,21 +15,13 @@ class SelectedMusclesChips extends StatelessWidget {
   Map<String, List<Muscle>> _groupSelectedMuscles() {
     Map<String, List<Muscle>> groupedMuscles = {};
 
+    // Group muscles by their display label (title) to avoid duplicates
     for (var muscle in selectedMuscles) {
-      String? groupKey;
-      for (var entry in Parser.muscleGroups.entries) {
-        if (entry.value.contains(muscle.id)) {
-          groupKey = entry.key;
-          break;
-        }
+      final label = muscle.title;
+      if (!groupedMuscles.containsKey(label)) {
+        groupedMuscles[label] = [];
       }
-
-      if (groupKey != null) {
-        if (!groupedMuscles.containsKey(groupKey)) {
-          groupedMuscles[groupKey] = [];
-        }
-        groupedMuscles[groupKey]!.add(muscle);
-      }
+      groupedMuscles[label]!.add(muscle);
     }
 
     return groupedMuscles;
@@ -59,12 +51,25 @@ class SelectedMusclesChips extends StatelessWidget {
             ),
             deleteIcon: const Icon(Icons.close, size: 18),
             onDeleted: () {
-              // Remove all muscles in the group
+              // Remove all muscles in the group and their pairs
               for (var muscle in muscles) {
                 onMuscleRemoved(muscle);
+                // Also remove the paired muscle if it exists
+                final pairedId = Parser.getPairedMuscleId(muscle.id);
+                if (pairedId != null) {
+                  // Find and remove the paired muscle
+                  final pairedMuscle = selectedMuscles.firstWhere(
+                    (m) => m.id == pairedId,
+                    orElse: () => muscle,
+                  );
+                  if (pairedMuscle.id == pairedId) {
+                    onMuscleRemoved(pairedMuscle);
+                  }
+                }
               }
             },
-            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+            backgroundColor:
+                Theme.of(context).primaryColor.withValues(alpha: 0.1),
             labelPadding: const EdgeInsets.symmetric(horizontal: 4),
             padding: const EdgeInsets.symmetric(horizontal: 4),
           );

@@ -94,9 +94,31 @@ class MusclePickerMapState extends State<MusclePickerMap> {
     Set<Muscle> newSelectedMuscles;
 
     if (isSelected) {
-      newSelectedMuscles = _selectedMuscles.where((m) => m.id != muscle.id).toSet();
+      // Deselect the muscle and its pair
+      newSelectedMuscles =
+          _selectedMuscles.where((m) => m.id != muscle.id).toSet();
+
+      // Also deselect the paired muscle if it exists
+      final pairedId = Parser.getPairedMuscleId(muscle.id);
+      if (pairedId != null) {
+        newSelectedMuscles =
+            newSelectedMuscles.where((m) => m.id != pairedId).toSet();
+      }
     } else {
+      // Select the muscle
       newSelectedMuscles = {..._selectedMuscles, muscle};
+
+      // Also select the paired muscle if it exists
+      final pairedId = Parser.getPairedMuscleId(muscle.id);
+      if (pairedId != null) {
+        final pairedMuscle = _muscleList.firstWhere(
+          (m) => m.id == pairedId,
+          orElse: () => muscle, // Fallback to original if not found
+        );
+        if (pairedMuscle.id == pairedId) {
+          newSelectedMuscles = {...newSelectedMuscles, pairedMuscle};
+        }
+      }
     }
 
     setState(() {
@@ -118,9 +140,9 @@ class MusclePickerMapState extends State<MusclePickerMap> {
       builder: (context, constraints) {
         // Handle infinite constraints by using a reasonable default size
         final width = widget.width ?? constraints.maxWidth;
-        final height = widget.height ?? 
+        final height = widget.height ??
             (constraints.maxHeight.isInfinite ? 550.0 : constraints.maxHeight);
-        
+
         return SizedBox(
           width: width,
           height: height,
@@ -137,12 +159,12 @@ class MusclePickerMapState extends State<MusclePickerMap> {
   }
 
   Widget _buildMuscleWidget(Muscle muscle) {
-    final isSelectable = !muscle.id.contains('outline') && 
-                        !muscle.id.contains('internal_structure') &&
-                        !muscle.id.contains('detail') &&
-                        !muscle.id.contains('accent') &&
-                        muscle.id != 'human_body' &&
-                        widget.isEditing == true;
+    final isSelectable = !muscle.id.contains('outline') &&
+        !muscle.id.contains('internal_structure') &&
+        !muscle.id.contains('detail') &&
+        !muscle.id.contains('accent') &&
+        muscle.id != 'human_body' &&
+        widget.isEditing == true;
 
     return Container(
       alignment: Alignment.center,
@@ -153,7 +175,8 @@ class MusclePickerMapState extends State<MusclePickerMap> {
           isComplex: true,
           foregroundPainter: MusclePainter(
             muscle: muscle,
-            selectedMuscles: widget.isEditing == true ? _selectedMuscles : <Muscle>{},
+            selectedMuscles:
+                widget.isEditing == true ? _selectedMuscles : <Muscle>{},
             dotColor: widget.dotColor,
             selectedColor: widget.selectedColor,
             strokeColor: widget.strokeColor,
@@ -166,5 +189,4 @@ class MusclePickerMapState extends State<MusclePickerMap> {
       ),
     );
   }
-
 }

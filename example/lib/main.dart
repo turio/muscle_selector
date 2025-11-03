@@ -125,7 +125,7 @@ class MuscleView extends StatelessWidget {
               );
             },
           ),
-          // Display selected muscles with corrected labels
+          // Display selected muscles grouped by label
           Consumer<MuscleSelectorProvider>(
             builder: (context, provider, child) {
               final muscles = provider.selectedMuscles;
@@ -138,6 +138,17 @@ class MuscleView extends StatelessWidget {
                   ),
                 );
               }
+
+              // Group muscles by their display label to avoid duplicates
+              final Map<String, List<Muscle>> groupedMuscles = {};
+              for (var muscle in muscles) {
+                final label = muscle.title;
+                if (!groupedMuscles.containsKey(label)) {
+                  groupedMuscles[label] = [];
+                }
+                groupedMuscles[label]!.add(muscle);
+              }
+
               return Container(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -154,14 +165,26 @@ class MuscleView extends StatelessWidget {
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: muscles.map((muscle) {
+                      children: groupedMuscles.entries.map((entry) {
+                        final label = entry.key;
+                        final musclesInGroup = entry.value;
                         return Chip(
-                          label: Text(muscle.title),
-                          backgroundColor: Colors.red.withOpacity(0.1),
+                          label: Text(label),
+                          backgroundColor: Colors.red.withValues(alpha: 0.1),
                           deleteIcon: const Icon(Icons.close, size: 18),
                           onDeleted: () {
-                            final updatedMuscles =
-                                muscles.where((m) => m.id != muscle.id).toSet();
+                            // Remove all muscles with this label and their pairs
+                            var updatedMuscles = muscles.toSet();
+                            for (var muscle in musclesInGroup) {
+                              updatedMuscles.remove(muscle);
+                              // Also remove the paired muscle if it exists
+                              final pairedId =
+                                  Parser.getPairedMuscleId(muscle.id);
+                              if (pairedId != null) {
+                                updatedMuscles
+                                    .removeWhere((m) => m.id == pairedId);
+                              }
+                            }
                             provider.setSelectedMuscles(updatedMuscles);
                           },
                         );
