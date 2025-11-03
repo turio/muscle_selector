@@ -7,8 +7,9 @@ class MuscleSelectorProvider extends ChangeNotifier {
   Set<Muscle> _backViewMuscles = {};
 
   bool get isFrontView => _isFrontView;
-  
-  Set<Muscle> get selectedMuscles => _isFrontView ? _frontViewMuscles : _backViewMuscles;
+
+  Set<Muscle> get selectedMuscles =>
+      _isFrontView ? _frontViewMuscles : _backViewMuscles;
 
   void toggleView() {
     _isFrontView = !_isFrontView;
@@ -16,9 +17,9 @@ class MuscleSelectorProvider extends ChangeNotifier {
   }
 
   void setSelectedMuscles(Set<Muscle>? muscles) {
-    // print("Setting selected muscles: ${muscles} for view: ${_isFrontView ? 'Front' : 'Back'}");
     if (muscles != null) {
-      print("Muscle IDs: ${muscles.map((muscle) => muscle.id).toList()}");
+      print(
+          "Selected muscles (${_isFrontView ? 'Front' : 'Back'}): ${muscles.map((muscle) => muscle.title).toList()}");
     }
     if (_isFrontView) {
       _frontViewMuscles = muscles ?? {};
@@ -42,4 +43,4 @@ class MuscleSelectorProvider extends ChangeNotifier {
     _backViewMuscles.clear();
     notifyListeners();
   }
-} 
+}

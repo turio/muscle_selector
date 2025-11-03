@@ -92,6 +92,96 @@ class Parser {
     'back_right_detail': ['back_right_detail'],
   };
 
+  // Mapping from SVG IDs to user-friendly display labels
+  static const Map<String, String> muscleLabels = {
+    // Front view - corrected labels
+    'front_right_leg': 'Right Calf',
+    'front_left_leg': 'Left Calf',
+    'front_right_adductor_magnus': 'Right Quad',
+    'front_left_adductor_magnus': 'Left Quad',
+    'front_left_thigh': 'Left Adductor',
+    'front_right_thigh': 'Right Adductor',
+    'front_groin_area': 'Groin Adductors',
+    'front_torso': 'Abs',
+    'front_left_side_chest': 'Left Oblique',
+    'front_right_side_chest': 'Right Oblique',
+    'front_left_shoulder_upper_back': 'Left Trap',
+    'front_right_shoulder_upper_back': 'Right Trap',
+    'front_left_triceps': 'Left Forearm',
+    'front_right_triceps': 'Right Forearm',
+    'front_right_chest_muscle': 'Right Chest',
+    'front_left_chest_muscle': 'Left Chest',
+    'front_middle_chest': 'Middle Chest',
+    'front_right_upper_chest_muscle': 'Right Upper Chest',
+    'front_left_upper_chest_muscle': 'Left Upper Chest',
+    'front_left_upper_arm': 'Left Bicep',
+    'front_right_upper_arm': 'Right Bicep',
+    'front_left_shoulder': 'Left Shoulder',
+    'front_right_shoulder': 'Right Shoulder',
+    'front_neck': 'Neck',
+    'front_left_knee': 'Left Knee',
+    'front_right_knee': 'Right Knee',
+    'front_face': 'Face',
+    'front_head_top': 'Head',
+    'front_left_forearm': 'Left Forearm',
+    'front_right_forearm': 'Right Forearm',
+    'front_left_hand_fingers': 'Left Hand',
+    'front_right_hand_finger': 'Right Hand',
+
+    // Back view - corrected labels
+    'back_right_adductor_magnus': 'Right Hamstring',
+    'back_left_adductor_magnus': 'Left Hamstring',
+    'back_left_buttocks': 'Left Glute',
+    'back_right_buttocks': 'Right Glute',
+    'back_left_thigh': 'Left Adductor',
+    'back_right_thigh': 'Right Adductor',
+    'upper_left_back': 'Left Lat',
+    'upper_right_back': 'Right Lat',
+    'mid_back': 'Mid Trap',
+    'back_mid_back': 'Mid Trap',
+    'back_upper_back': 'Upper Trap',
+    'back_upper_neck': 'Neck Trap',
+    'back_right_upper_arm': 'Right Tricep',
+    'back_left_upper_arm': 'Left Tricep',
+    'back_right_triceps': 'Right Back Forearm',
+    'back_left_triceps': 'Left Back Forearm',
+    'back_right_forearm': 'Right Hand',
+    'back_left_forearm': 'Left Hand',
+    'back_right_leg': 'Right Calf',
+    'back_left_leg': 'Left Calf',
+    'back_right_calf': 'Right Lower Calf',
+    'back_left_calf': 'Left Lower Calf',
+    'back_right_shoulder': 'Right Shoulder',
+    'back_left_shoulder': 'Left Shoulder',
+    'back_left_knee': 'Left Knee',
+    'back_right_knee': 'Right Knee',
+    'back_right_fingers': 'Right Fingers',
+    'back_left_fingers': 'Left Fingers',
+    'back_head': 'Head',
+    'back_right_ear': 'Right Ear',
+    'back_left_ear': 'Left Ear',
+  };
+
+  /// Converts a muscle ID to a user-friendly display label
+  static String getMuscleLabel(String id) {
+    return muscleLabels[id] ?? _formatDefaultLabel(id);
+  }
+
+  /// Formats the ID as a fallback label by removing prefixes and converting to title case
+  static String _formatDefaultLabel(String id) {
+    // Remove front_ or back_ prefix
+    String label = id.replaceFirst(RegExp(r'^(front_|back_)'), '');
+
+    // Replace underscores with spaces
+    label = label.replaceAll('_', ' ');
+
+    // Convert to title case
+    return label.split(' ').map((word) {
+      if (word.isEmpty) return word;
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(' ');
+  }
+
   Set<Muscle> getMusclesByGroups(
       List<String> groupKeys, List<Muscle> muscleList) {
     final groupIds =
@@ -109,12 +199,14 @@ class Parser {
 
     regExp.allMatches(svgMuscle).forEach((muscleData) {
       final id = muscleData.group(1)!;
-      final title = muscleData.group(2)!;
+      // SVG title from group(2) is ignored, using mapped labels instead
       final path = parseSvgPath(muscleData.group(3)!);
 
       sizeController.addBounds(path.getBounds());
 
-      final muscle = Muscle(id: id, title: title, path: path);
+      // Use the mapped label instead of the SVG title
+      final displayLabel = getMuscleLabel(id);
+      final muscle = Muscle(id: id, title: displayLabel, path: path);
 
       muscleList.add(muscle);
 
@@ -123,7 +215,8 @@ class Parser {
       if (group != null) {
         for (var groupId in group.value) {
           if (groupId != id) {
-            final groupMuscle = Muscle(id: groupId, title: title, path: path);
+            final groupMuscle =
+                Muscle(id: groupId, title: displayLabel, path: path);
             muscleList.add(groupMuscle);
           }
         }

@@ -91,7 +91,8 @@ class MuscleView extends StatelessWidget {
                     provider.toggleView();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: provider.isFrontView ? Colors.blue : Colors.green,
+                    backgroundColor:
+                        provider.isFrontView ? Colors.blue : Colors.green,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   child: Text(
@@ -107,23 +108,70 @@ class MuscleView extends StatelessWidget {
             },
           ),
           Consumer<MuscleSelectorProvider>(
-              builder: (context, provider, child) {
-                return MusclePickerMap(
-                  key: ValueKey(provider.isFrontView), // Use ValueKey to force rebuild
-                  map: provider.isFrontView ? Maps.BODY_FRONT : Maps.BODY_BACK,
-                  isEditing: true,
-                  initialSelectedMuscles: provider.selectedMuscles,
-                  onChanged: (muscles) {
-                    provider.setSelectedMuscles(muscles);
-                  },
-                  actAsToggle: true,
-                  dotColor: Colors.black,
-                  selectedColor: Colors.red,
-                  strokeColor: Colors.black,
+            builder: (context, provider, child) {
+              return MusclePickerMap(
+                key: ValueKey(
+                    provider.isFrontView), // Use ValueKey to force rebuild
+                map: provider.isFrontView ? Maps.BODY_FRONT : Maps.BODY_BACK,
+                isEditing: true,
+                initialSelectedMuscles: provider.selectedMuscles,
+                onChanged: (muscles) {
+                  provider.setSelectedMuscles(muscles);
+                },
+                actAsToggle: true,
+                dotColor: Colors.black,
+                selectedColor: Colors.red,
+                strokeColor: Colors.black,
+              );
+            },
+          ),
+          // Display selected muscles with corrected labels
+          Consumer<MuscleSelectorProvider>(
+            builder: (context, provider, child) {
+              final muscles = provider.selectedMuscles;
+              if (muscles.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'No muscles selected',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
                 );
-              },
-            ),
-          
+              }
+              return Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Selected Muscles:',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: muscles.map((muscle) {
+                        return Chip(
+                          label: Text(muscle.title),
+                          backgroundColor: Colors.red.withOpacity(0.1),
+                          deleteIcon: const Icon(Icons.close, size: 18),
+                          onDeleted: () {
+                            final updatedMuscles =
+                                muscles.where((m) => m.id != muscle.id).toSet();
+                            provider.setSelectedMuscles(updatedMuscles);
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
