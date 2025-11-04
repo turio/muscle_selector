@@ -18,7 +18,12 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Muscle Selector',
         home: const MuscleSelectionScreen(),
-        theme: ThemeData.light(),
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: Colors.black,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.black,
+          ),
+        ),
       ),
     );
   }
@@ -119,9 +124,9 @@ class MuscleView extends StatelessWidget {
                   provider.setSelectedMuscles(muscles);
                 },
                 actAsToggle: true,
-                dotColor: Colors.black,
+                dotColor: Colors.white,
                 selectedColor: Colors.red,
-                strokeColor: Colors.black,
+                strokeColor: Colors.white,
               );
             },
           ),

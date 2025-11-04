@@ -25,13 +25,17 @@ class MusclePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final pen = Paint()
       ..color = strokeColor ?? Colors.black45
-      ..strokeWidth = 0.3
-      ..style = PaintingStyle.stroke;
+      ..strokeWidth = 6.0
+      ..style = PaintingStyle.stroke
+      ..isAntiAlias = true
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
 
     final selectedPen = Paint()
       ..color = selectedColor ?? Colors.blue
       ..strokeWidth = 1.0
-      ..style = PaintingStyle.fill;
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
 
     _scale = sizeController.calculateScale(size);
     canvas.scale(_scale);
