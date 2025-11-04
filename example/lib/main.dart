@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:muscle_selector/muscle_selector.dart';
 import 'package:provider/provider.dart';
 import 'muscle_selector_provider.dart';
+import 'muscle_heatmap_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -56,6 +57,27 @@ class MuscleSelectionScreen extends StatelessWidget {
                 child: Text(
                   'Muscle Selector',
                   style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MuscleHeatmapScreen(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrange,
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Muscle Heatmap Demo',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ),

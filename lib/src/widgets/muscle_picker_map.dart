@@ -16,6 +16,7 @@ class MusclePickerMap extends StatefulWidget {
   final bool? isEditing;
   final Set<Muscle>? initialSelectedMuscles;
   final List<String>? initialSelectedGroups;
+  final List<MuscleColorConfig>? muscleColorConfigs;
 
   const MusclePickerMap({
     Key? key,
@@ -30,6 +31,7 @@ class MusclePickerMap extends StatefulWidget {
     this.isEditing = true,
     this.initialSelectedMuscles,
     this.initialSelectedGroups,
+    this.muscleColorConfigs,
   }) : super(key: key);
 
   @override
@@ -39,6 +41,7 @@ class MusclePickerMap extends StatefulWidget {
 class MusclePickerMapState extends State<MusclePickerMap> {
   final List<Muscle> _muscleList = [];
   Set<Muscle> _selectedMuscles = {};
+  Map<String, Color> _customMuscleColors = {};
 
   final _sizeController = SizeController.instance;
   Size? mapSize;
@@ -47,9 +50,19 @@ class MusclePickerMapState extends State<MusclePickerMap> {
   void initState() {
     super.initState();
     _selectedMuscles = widget.initialSelectedMuscles ?? {};
+    _initializeCustomColors();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadMuscleList();
     });
+  }
+
+  void _initializeCustomColors() {
+    if (widget.muscleColorConfigs != null) {
+      _customMuscleColors = {
+        for (var config in widget.muscleColorConfigs!)
+          config.muscleId: config.color
+      };
+    }
   }
 
   Future<void> _loadMuscleList() async {
@@ -76,7 +89,7 @@ class MusclePickerMapState extends State<MusclePickerMap> {
             .getMusclesByGroups(widget.initialSelectedGroups!, _muscleList);
         _selectedMuscles.addAll(groupMuscles);
       }
-      widget.onChanged?.call(_selectedMuscles);
+      widget.onChanged(_selectedMuscles);
     }
   }
 
@@ -84,11 +97,11 @@ class MusclePickerMapState extends State<MusclePickerMap> {
     setState(() {
       _selectedMuscles.clear();
     });
-    widget.onChanged?.call(_selectedMuscles);
+    widget.onChanged(_selectedMuscles);
   }
 
   void _handleMuscleTap(Muscle muscle) {
-    if (widget.isEditing == false || widget.onChanged == null) return;
+    if (widget.isEditing == false) return;
 
     final isSelected = _selectedMuscles.any((m) => m.id == muscle.id);
     Set<Muscle> newSelectedMuscles;
@@ -125,7 +138,7 @@ class MusclePickerMapState extends State<MusclePickerMap> {
       _selectedMuscles = newSelectedMuscles;
     });
 
-    widget.onChanged!(newSelectedMuscles);
+    widget.onChanged(newSelectedMuscles);
   }
 
   @override
@@ -180,6 +193,7 @@ class MusclePickerMapState extends State<MusclePickerMap> {
             dotColor: widget.dotColor,
             selectedColor: widget.selectedColor,
             strokeColor: widget.strokeColor,
+            customMuscleColors: _customMuscleColors,
           ),
           child: const SizedBox(
             width: double.infinity,

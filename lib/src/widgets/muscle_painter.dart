@@ -8,6 +8,7 @@ class MusclePainter extends CustomPainter {
   final Color? strokeColor;
   final Color? selectedColor;
   final Color? dotColor;
+  final Map<String, Color>? customMuscleColors;
 
   final sizeController = SizeController.instance;
 
@@ -19,6 +20,7 @@ class MusclePainter extends CustomPainter {
     this.selectedColor,
     this.strokeColor,
     this.dotColor,
+    this.customMuscleColors,
   });
 
   @override
@@ -31,8 +33,11 @@ class MusclePainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
 
+    // Check if this muscle has a custom color
+    Color? customColor = customMuscleColors?[muscle.id];
+
     final selectedPen = Paint()
-      ..color = selectedColor ?? Colors.blue
+      ..color = customColor ?? selectedColor ?? Colors.blue
       ..strokeWidth = 1.0
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
@@ -40,7 +45,9 @@ class MusclePainter extends CustomPainter {
     _scale = sizeController.calculateScale(size);
     canvas.scale(_scale);
 
-    if (selectedMuscles.any((selected) => selected.id == muscle.id)) {
+    // Draw fill if muscle is selected or has custom color
+    if (selectedMuscles.any((selected) => selected.id == muscle.id) ||
+        customColor != null) {
       canvas.drawPath(muscle.path, selectedPen);
     }
 
