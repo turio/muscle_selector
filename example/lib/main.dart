@@ -152,7 +152,7 @@ class MuscleView extends StatelessWidget {
               );
             },
           ),
-          // Display selected muscles grouped by label
+          // Display selected muscles grouped by label (from both views)
           Consumer<MuscleSelectorProvider>(
             builder: (context, provider, child) {
               final muscles = provider.selectedMuscles;
@@ -166,7 +166,7 @@ class MuscleView extends StatelessWidget {
                 );
               }
 
-              // Group muscles by their display label to avoid duplicates
+              // Group muscles by their display label to combine front/back
               final Map<String, List<Muscle>> groupedMuscles = {};
               for (var muscle in muscles) {
                 final label = muscle.title;

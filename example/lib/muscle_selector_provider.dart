@@ -3,13 +3,11 @@ import 'package:muscle_selector/muscle_selector.dart';
 
 class MuscleSelectorProvider extends ChangeNotifier {
   bool _isFrontView = true;
-  Set<Muscle> _frontViewMuscles = {};
-  Set<Muscle> _backViewMuscles = {};
+  Set<Muscle> _selectedMuscles = {};
 
   bool get isFrontView => _isFrontView;
 
-  Set<Muscle> get selectedMuscles =>
-      _isFrontView ? _frontViewMuscles : _backViewMuscles;
+  Set<Muscle> get selectedMuscles => _selectedMuscles;
 
   void toggleView() {
     _isFrontView = !_isFrontView;
@@ -18,29 +16,20 @@ class MuscleSelectorProvider extends ChangeNotifier {
 
   void setSelectedMuscles(Set<Muscle>? muscles) {
     if (muscles != null) {
-      print(
+      debugPrint(
           "Selected muscles (${_isFrontView ? 'Front' : 'Back'}): ${muscles.map((muscle) => muscle.title).toList()}");
     }
-    if (_isFrontView) {
-      _frontViewMuscles = muscles ?? {};
-    } else {
-      _backViewMuscles = muscles ?? {};
-    }
+    _selectedMuscles = muscles ?? {};
     notifyListeners();
   }
 
   void clearSelection() {
-    if (_isFrontView) {
-      _frontViewMuscles.clear();
-    } else {
-      _backViewMuscles.clear();
-    }
+    _selectedMuscles.clear();
     notifyListeners();
   }
 
   void clearAllSelections() {
-    _frontViewMuscles.clear();
-    _backViewMuscles.clear();
+    _selectedMuscles.clear();
     notifyListeners();
   }
 }
