@@ -49,7 +49,7 @@ class MusclePickerMapState extends State<MusclePickerMap> {
   @override
   void initState() {
     super.initState();
-    _selectedMuscles = widget.initialSelectedMuscles ?? {};
+    // Don't copy initialSelectedMuscles here - will be filtered in _initializeSelectedMuscles
     _initializeCustomColors();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadMuscleList();
@@ -81,15 +81,21 @@ class MusclePickerMapState extends State<MusclePickerMap> {
 
   void _initializeSelectedMuscles() {
     if (widget.isEditing == true) {
+      // Filter initialSelectedMuscles to only include muscles that exist in current view
       if (widget.initialSelectedMuscles != null) {
-        _selectedMuscles.addAll(widget.initialSelectedMuscles!);
+        final muscleIdsInCurrentView = _muscleList.map((m) => m.id).toSet();
+        final filteredMuscles = widget.initialSelectedMuscles!
+            .where((m) => muscleIdsInCurrentView.contains(m.id))
+            .toSet();
+        _selectedMuscles = filteredMuscles;
       } else if (widget.initialSelectedGroups != null &&
           widget.initialSelectedGroups!.isNotEmpty) {
         final groupMuscles = Parser.instance
             .getMusclesByGroups(widget.initialSelectedGroups!, _muscleList);
         _selectedMuscles.addAll(groupMuscles);
       }
-      widget.onChanged(_selectedMuscles);
+      // Don't call onChanged during initialization to preserve parent's full selection
+      // The parent already has the complete selection across both views
     }
   }
 
